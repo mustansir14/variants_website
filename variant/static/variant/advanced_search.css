@@ -1,0 +1,15 @@
+.custom-width {
+  width: 40%;
+}
+
+.first-row {
+    margin-left: 63px;
+}
+
+.first-row > .custom-width {
+    width: 43.5%;
+}
+
+.input-field > select, input, button {
+    margin: 0px 10px;
+}

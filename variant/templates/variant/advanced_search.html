@@ -1,0 +1,147 @@
+{% extends "variant/base.html" %}
+{% load static %}
+{% load variant_extras %}
+{% block content %}
+	<link rel="stylesheet" type="text/css" href="{% static 'variant/main.css' %}"/>
+	<link rel="stylesheet" type="text/css" href="{% static 'variant/search.css' %}"/>
+	<link rel="stylesheet" type="text/css" href="{% static 'variant/advanced_search.css' %}"/>
+	<script type="text/javascript" src="{% static 'variant/javascript/helpers.js' %}"></script>
+	<script type="text/javascript" src="{% static 'variant/javascript/jquery-3.5.1.min.js' %}"></script>
+
+	
+	<div class="container">
+		<div class="col-md-12">
+			<form>
+			<h3>Advanced Search Variant Data</h3>
+	           <div class="row">
+	    		<div class="col-12">
+            		<div id="input-fields">
+            			<div class="row input-field first-row">
+    						<select name="f1">
+        						{% for field in fields %}
+        						<option {% if params.f1 %} {% if field == params.f1 %} selected="selected" {% endif %}{% endif %}>{{ field }}</option>
+        						{% endfor %}
+        					</select>
+            				<input type="text" class="search-query form-control custom-width" placeholder="Search" name="q1" id="q1" {% if params.q1 %} value={{ params.q1 }} {% endif %}/>
+            			</div>
+            			<div class="row input-field">
+        					<select name="o2">
+        						<option {% if params.o2 %} {% if params.o2 == "AND" %} selected="selected" {% endif %}{% endif %} >AND</option>
+        						<option {% if params.o2 %} {% if params.o2 == "OR" %} selected="selected" {% endif %}{% endif %} >OR</option>
+        						<option {% if params.o2 %} {% if params.o2 == "NOT" %} selected="selected" {% endif %}{% endif %} >NOT</option>
+        					</select>
+        					<select name="f2">
+        						{% for field in fields %}
+        						<option {% if params.f2 %} {% if field == params.f2 %} selected="selected" {% endif %}{% endif %}>{{ field }}</option>
+        						{% endfor %}
+        					</select>
+            				<input type="text" class="search-query form-control  custom-width" placeholder="Search" name="q2" id="q2" {% if params.q2 %} value={{ params.q2 }} {% endif %}/>
+            			</div>
+ 
+            		</div>
+            		<div style="text-align: center; margin-top: 20px;">
+	            		<button type="submit" enabled>
+	 					Search
+	            		</button>
+	            		<button type="button" onclick="addRow({{ fields|safe }})">
+	            			Add another criteria
+	            		</button>
+            		</div>    
+        		</div>
+    		</div>
+    	</form>
+    	{% if page_obj %}
+
+            	<div class="pagination">
+			    <span class="step-links">
+			        {% if page_obj.has_previous %}
+			            <a href="?{% for param, value in params.items %}{% if 'page' not in param %}{{param|strip}}={{value}}&{% endif %}{% endfor %}page=1">&laquo; first</a>
+			            <a href="?{% for param, value in params.items %}{% if 'page' not in param %}{{param|strip}}={{value}}&{% endif %}{% endfor %}page={{ page_obj.previous_page_number }}">previous</a>
+			        {% endif %}
+
+			        <span class="current">
+			            Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}.
+			        </span>
+
+			        {% if page_obj.has_next %}
+			            <a href="?{% for param, value in params.items %}{% if 'page' not in param %}{{param|strip}}={{value}}&{% endif %}{% endfor %}page={{ page_obj.next_page_number }}">next</a>
+			            <a href="?{% for param, value in params.items %}{% if 'page' not in param %}{{param|strip}}={{value}}&{% endif %}{% endfor %}page={{ page_obj.paginator.num_pages }}">last &raquo;</a>
+			        {% endif %}
+			    </span>
+				</div>
+
+	            {% for variant in page_obj %}
+	            	<article class="media content-section">
+					  <div class="media-body">
+					    <div class="article-metadata">
+					      <a class="mr-2" href="{% url 'variants-detail' gene=variant.gene|split|index:0 variant=variant.variant_id %}">{{ variant.variant_id }}</a>
+					      <small class="text-muted">{{ variant.variant_type }}</small>
+					    </div>
+					    <h2><a class="article-title" href="#">{{ post.title }}</a></h2>
+					    <table>
+					    	<tbody>
+					    		<tr class="article-content">
+					    			<td>Gene Name:</td>
+					    			<td>{{ variant.gene|get_genes }}</td>
+					    		</tr>
+					    		<tr class="article-content">
+					    			<td>Alleles:</td>
+					    			<td>{{ variant.alleles|split|index:0 }}</td>
+					    		</tr>
+					    		<tr class="article-content">
+					    			<td valign="top">Flanks:</td>
+					    			<td>{{ variant.alleles|get_flanks}}</td>
+					    		</tr>
+					    		<tr class="article-content">
+					    			<td>Chromosome:</td>
+					    			<td>{{ variant.chromosome|split:":"|index:0 }}</td>
+					    		</tr>
+					    		<tr class="article-content">
+					    			<td>Base position:</td>
+					    			<td>{{ variant.chromosome|split:":"|index:1|split|index:0 }}</td>
+					    		</tr>
+					    		<tr class="article-content">
+					    			<td>Function Class:</td>
+					    			<td>{{ variant.functional_consequences }}</td>
+					    		</tr>
+					    		<tr class="article-content">
+					    			<td>HGVS:</td>
+					    			<td>{{ variant.hgvs|split:"|"|index:0 }}</td>
+					    		</tr>
+					    		<tr class="article-content">
+					    			<td valign="top">MAF:</td>
+					    			<td>{{ variant.maf|split:"|"|index:0 }}</td>
+					    		</tr>
+					    		<tr class="article-content">
+					    			<td>Validation Status:</td>
+					    			<td>{{ variant.validated }}</td>
+					    		</tr>
+					    	</tbody>
+					    </table>
+					  </div>
+					</article>
+	            {% endfor %}
+	            <div class="pagination">
+			    <span class="step-links">
+			        {% if page_obj.has_previous %}
+			            <a href="?{% for param, value in params.items %}{% if 'page' not in param %}{{param|strip}}={{value}}&{% endif %}{% endfor %}page=1">&laquo; first</a>
+			            <a href="?{% for param, value in params.items %}{% if 'page' not in param %}{{param|strip}}={{value}}&{% endif %}{% endfor %}page={{ page_obj.previous_page_number }}">previous</a>
+			        {% endif %}
+
+			        <span class="current">
+			            Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}.
+			        </span>
+
+			        {% if page_obj.has_next %}
+			            <a href="?{% for param, value in params.items %}{% if 'page' not in param %}{{param|strip}}={{value}}&{% endif %}{% endfor %}page={{ page_obj.next_page_number }}">next</a>
+			            <a href="?{% for param, value in params.items %}{% if 'page' not in param %}{{param|strip}}={{value}}&{% endif %}{% endfor %}page={{ page_obj.paginator.num_pages }}">last &raquo;</a>
+			        {% endif %}
+			    </span>
+				</div>
+			{% elif q %}
+			<p>There are no search results matching your given keyword.</p>
+            {% endif %}
+    </div>
+</div>
+<script type="text/javascript">generateRows({{ params|safe }}, {{ fields|safe }});</script>
+{% endblock content%}

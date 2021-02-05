@@ -1,0 +1,122 @@
+{% extends "variant/base.html" %}
+{% load static %}
+{% load variant_extras %}
+{% block content %}
+	<link rel="stylesheet" type="text/css" href="{% static 'variant/main.css' %}"/>
+	<link rel="stylesheet" type="text/css" href="{% static 'variant/search.css' %}"/>
+	
+	<div class="container">
+		<div class="col-md-12">
+			<form>
+			<h3>Search Variant Data</h3>
+	           <div class="row">
+	    		<div class="col-12">
+    	    		<div id="custom-search-input">
+                		<div class="input-group">
+                    		<input type="text" class="search-query form-control" placeholder="Search" name="q" id="q" {% if q %} value={{ q }} {% endif %}/>
+                    		<span class="input-group-btn">
+                        		<button class="search-btn" type="submit" enabled>
+                            	<span class="fa fa-search"></span>
+                        		</button>
+                			</span>
+                		</div>
+            		</div>
+            		<br>
+            		<a href="{% url 'variants-advanced-search' %}">Advanced Search</a>
+        		</div>
+			</div>
+                </form>
+            {% if page_obj %}
+
+            	<div class="pagination">
+			    <span class="step-links">
+			        {% if page_obj.has_previous %}
+			            <a href="?q={{ q }}&page=1">&laquo; first</a>
+			            <a href="?q={{ q }}&page={{ page_obj.previous_page_number }}">previous</a>
+			        {% endif %}
+
+			        <span class="current">
+			            Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}.
+			        </span>
+
+			        {% if page_obj.has_next %}
+			            <a href="?q={{ q }}&page={{ page_obj.next_page_number }}">next</a>
+			            <a href="?q={{ q }}&page={{ page_obj.paginator.num_pages }}">last &raquo;</a>
+			        {% endif %}
+			    </span>
+				</div>
+
+	            {% for variant in page_obj %}
+	            	<article class="media content-section">
+					  <div class="media-body">
+					    <div class="article-metadata">
+					      <a class="mr-2" href="{% url 'variants-detail' gene=variant.gene|split|index:0 variant=variant.variant_id %}">{{ variant.variant_id }}</a>
+					      <small class="text-muted">{{ variant.variant_type }}</small>
+					    </div>
+					    <h2><a class="article-title" href="#">{{ post.title }}</a></h2>
+					    <table>
+					    	<tbody>
+					    		<tr class="article-content">
+					    			<td>Gene Name:</td>
+					    			<td>{{ variant.gene|get_genes }}</td>
+					    		</tr>
+					    		<tr class="article-content">
+					    			<td>Alleles:</td>
+					    			<td>{{ variant.alleles|split|index:0 }}</td>
+					    		</tr>
+					    		<tr class="article-content">
+					    			<td valign="top">Flanks:</td>
+					    			<td>{{ variant.alleles|get_flanks}}</td>
+					    		</tr>
+					    		<tr class="article-content">
+					    			<td>Chromosome:</td>
+					    			<td>{{ variant.chromosome|split:":"|index:0 }}</td>
+					    		</tr>
+					    		<tr class="article-content">
+					    			<td>Base position:</td>
+					    			<td>{{ variant.chromosome|split:":"|index:1|split|index:0 }}</td>
+					    		</tr>
+					    		<tr class="article-content">
+					    			<td>Function Class:</td>
+					    			<td>{{ variant.functional_consequences }}</td>
+					    		</tr>
+					    		<tr class="article-content">
+					    			<td>HGVS:</td>
+					    			<td>{{ variant.hgvs|split:"|"|index:0 }}</td>
+					    		</tr>
+					    		<tr class="article-content">
+					    			<td valign="top">MAF:</td>
+					    			<td>{{ variant.maf|split:"|"|index:0 }}</td>
+					    		</tr>
+					    		<tr class="article-content">
+					    			<td>Validation Status:</td>
+					    			<td>{{ variant.validated }}</td>
+					    		</tr>
+					    	</tbody>
+					    </table>
+					  </div>
+					</article>
+	            {% endfor %}
+	            <div class="pagination">
+			    <span class="step-links">
+			        {% if page_obj.has_previous %}
+			            <a href="?q={{ q }}&page=1">&laquo; first</a>
+			            <a href="?q={{ q }}&page={{ page_obj.previous_page_number }}">previous</a>
+			        {% endif %}
+
+			        <span class="current">
+			            Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}.
+			        </span>
+
+			        {% if page_obj.has_next %}
+			            <a href="?q={{ q }}&page={{ page_obj.next_page_number }}">next</a>
+			            <a href="?q={{ q }}&page={{ page_obj.paginator.num_pages }}">last &raquo;</a>
+			        {% endif %}
+			    </span>
+				</div>
+			{% elif q %}
+			<p>There are no search results matching your given keyword.</p>
+            {% endif %}
+		</div>
+	</div>
+{% endblock content%}

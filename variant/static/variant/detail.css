@@ -1,0 +1,48 @@
+dt, dd , th, td {
+	padding: 10px 20px ;
+	word-break: break-word;
+	text-align: left;
+	width: 50%;
+}
+
+th {
+	padding-bottom: 10px;
+}
+
+h1	{
+	margin-top: 20px;
+	background-color: #5f788a;
+	color: white;
+	padding: 10px 20px;
+	display: inline-block;
+}
+
+h4 {
+	background-color: #5f788a;
+	padding: 10px 20px;
+	color: white;
+}
+
+.table-box {
+	margin: 20px 0px;
+	background-color: #FFFFFF;
+	padding: 20px;
+
+}
+.summary-box {
+	padding-top: 10px;
+	background-color: #e1f3f8;
+}
+
+.tables-container {
+	width: 80%;
+}
+
+.table-buttons {
+	margin-top: 20px;
+}
+
+.table-buttons > button {
+	width: 100%;
+	padding: 10px;
+}
